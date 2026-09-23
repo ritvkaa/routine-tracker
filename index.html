@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Placement + Semester Command Center</title>
+<style>
+:root{--bg:#07111f;--card:#0d1b2d;--card2:#10243b;--text:#eef6ff;--muted:#91a6bc;--line:#1d3550;--accent:#6ea8ff;--accent2:#7de2c0;--danger:#ff7d91}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:linear-gradient(135deg,#06101d,#0b1728 55%,#081425);color:var(--text)}
+.app{max-width:1250px;margin:auto;padding:28px 20px 50px}.top{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:25px}.brand h1{font-size:28px;margin:0 0 6px}.brand p{margin:0;color:var(--muted)}button,select,input,textarea{font:inherit}button{border:0;border-radius:10px;padding:10px 14px;cursor:pointer;color:#06101d;background:var(--accent);font-weight:700}.ghost{background:#12263d;color:var(--text);border:1px solid var(--line)}.danger{background:#341725;color:#ffb6c2}.grid{display:grid;gap:16px}.stats{grid-template-columns:repeat(4,1fr)}.main{grid-template-columns:1.25fr .75fr}.two{grid-template-columns:1fr 1fr}.card{background:rgba(13,27,45,.92);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 12px 35px #0003}.stat .num{font-size:30px;font-weight:800}.label{color:var(--muted);font-size:13px}.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.section-title h2{font-size:17px;margin:0}.check{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #ffffff0a}.check:last-child{border:0}.check input{width:18px;height:18px;accent-color:var(--accent2)}.pill{display:inline-block;padding:5px 9px;border-radius:999px;background:#17314c;color:#a9caff;font-size:12px}.progress{height:8px;background:#15283d;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px}.row{display:flex;justify-content:space-between;gap:12px;align-items:center}.muted{color:var(--muted)}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px;border-bottom:1px solid var(--line);font-size:13px}th{color:var(--muted);font-weight:600}.small{font-size:12px}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}input,select,textarea{width:100%;background:#091728;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:9px}textarea{min-height:70px;resize:vertical}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.empty{color:var(--muted);padding:20px 0;text-align:center}.subject{display:grid;grid-template-columns:1fr 110px 120px;gap:8px;align-items:center;margin:9px 0}.footer{margin-top:18px;color:var(--muted);font-size:12px;text-align:center}.toast{position:fixed;right:20px;bottom:20px;background:#10243b;border:1px solid var(--line);padding:12px 16px;border-radius:10px;display:none}
+@media(max-width:900px){.stats,.main,.two{grid-template-columns:1fr 1fr}.top{align-items:flex-start;flex-direction:column}}
+@media(max-width:600px){.stats,.main,.two,.form-grid{grid-template-columns:1fr}.subject{grid-template-columns:1fr}.app{padding:18px 12px}.brand h1{font-size:23px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+<div class="brand"><h1>Placement + Semester Command Center</h1><p>Your personal dashboard for DSA, 5th semester & daily execution.</p></div>
+<div class="actions"><button class="ghost" onclick="exportData()">Export backup</button><button class="ghost" onclick="resetAll()">Reset</button></div>
+</header>
+
+<section class="grid stats">
+<div class="card stat"><div class="label">DSA problems completed</div><div class="num" id="dsaCount">0</div><div class="small muted">Deeply understood > quantity</div></div>
+<div class="card stat"><div class="label">Days logged</div><div class="num" id="daysCount">0</div><div class="small muted">Your actual consistency</div></div>
+<div class="card stat"><div class="label">Semester tasks completed</div><div class="num" id="semCount">0</div><div class="small muted">Revision + assignments + labs</div></div>
+<div class="card stat"><div class="label">Attendance days</div><div class="num" id="attCount">0</div><div class="small muted">Track honestly</div></div>
+</section>
+
+<div style="height:16px"></div>
+
+<section class="grid main">
+<div class="card">
+<div class="section-title"><h2>Today's execution</h2><span class="pill" id="today"></span></div>
+<div id="checks"></div>
+<div class="actions"><button onclick="saveToday()">Save today's progress</button></div>
+</div>
+
+<div class="card">
+<div class="section-title"><h2>Placement tracker</h2><span class="pill">Sep–Feb roadmap</span></div>
+<p class="muted small">Current pattern</p><h3 style="margin:5px 0 14px">Monotonic Stack</h3>
+<div class="row"><span>Current problem</span><strong>Largest Rectangle in Histogram</strong></div>
+<div style="margin:16px 0"><div class="row small"><span>Roadmap progress</span><span id="roadPct">0%</span></div><div class="progress"><i id="roadBar" style="width:0%"></i></div></div>
+<div class="small muted">Sequence</div>
+<p>Daily Temperatures → Car Fleet → Largest Rectangle → Pattern recognition</p>
+<div class="row"><span>Next target</span><strong>Recognise monotonic-stack problems</strong></div>
+</div>
+</section>
+
+<div style="height:16px"></div>
+
+<section class="grid two">
+<div class="card">
+<div class="section-title"><h2>5th-semester CGPA tracker</h2><button class="ghost small" onclick="addSubject()">+ Subject</button></div>
+<div id="subjects"></div>
+</div>
+
+<div class="card">
+<div class="section-title"><h2>Weekly review</h2><span class="pill" id="weekRange"></span></div>
+<div class="grid two">
+<div><div class="label">DSA days</div><h2 id="dsaDays">0 / 5</h2></div>
+<div><div class="label">Semester-work days</div><h2 id="semDays">0 / 5</h2></div>
+<div><div class="label">Assignments/tasks</div><h2 id="taskPct">0%</h2></div>
+<div><div class="label">Attendance</div><h2 id="weekAtt">0 days</h2></div>
+</div>
+<label class="label">Next-week priority</label><textarea id="priority" placeholder="Example: Finish Largest Rectangle + revise CN transport layer"></textarea>
+<div class="actions"><button onclick="savePriority()">Save review</button></div>
+</div>
+</section>
+
+<div style="height:16px"></div>
+
+<section class="card">
+<div class="section-title"><h2>Daily Log</h2><button class="ghost" onclick="addPastDay()">+ Add past day</button></div>
+<p class="muted small">This is the permanent history. Day 1 and Day 2 can be entered manually, and every future day stays here.</p>
+<div class="table-wrap"><table><thead><tr><th>Date / Day</th><th>DSA</th><th>Semester</th><th>Attendance</th><th>Main progress / notes</th><th></th></tr></thead><tbody id="logBody"></tbody></table></div>
+</section>
+
+<div style="height:16px"></div>
+
+<section class="card">
+<div class="section-title"><h2>Quick add problem</h2><span class="pill">Placement</span></div>
+<div class="form-grid">
+<input id="problemName" placeholder="Problem name e.g. Largest Rectangle">
+<select id="problemStatus"><option value="understood">Understood</option><option value="completed">Completed</option><option value="revisit">Revisit</option></select>
+</div>
+<div class="actions"><button onclick="addProblem()">Add to DSA history</button></div>
+<div id="problemHistory" class="small" style="margin-top:12px"></div>
+</section>
+
+<div class="footer">Data is saved in your browser using localStorage. Use Export backup regularly if you want a portable backup.</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY="placementSemCommandCenter_v1";
+const todayKey=()=>new Date().toISOString().slice(0,10);
+let data=JSON.parse(localStorage.getItem(KEY)||"null")||{
+ logs:[
+  {date:"Day 1",dsa:true,sem:false,att:"partial",notes:"Daily Temperatures understood; Car Fleet brute-force logic understood."},
+  {date:"Day 2",dsa:true,sem:false,att:"unknown",notes:"Car Fleet completed; Largest Rectangle started but code not yet derived."}
+ ],
+ subjects:[
+  {name:"Computer Networks",target:"",status:"In progress"},
+  {name:"Subject 2",target:"",status:"Not started"},
+  {name:"Subject 3",target:"",status:"Not started"},
+  {name:"Labs / Practicals",target:"",status:"In progress"}
+ ],
+ problems:[
+  {name:"Daily Temperatures",status:"completed"},
+  {name:"Car Fleet",status:"completed"}
+ ],
+ today:{},
+ priority:""
+};
+function persist(){localStorage.setItem(KEY,JSON.stringify(data));render();toast("Saved ✓")}
+function toast(s){let t=document.getElementById("toast");t.textContent=s;t.style.display="block";setTimeout(()=>t.style.display="none",1400)}
+function render(){
+ document.getElementById("today").textContent=new Date().toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"});
+ const checks=[
+ ["college","Attend college/classes"],["revision","Current-semester revision"],["assignment","Assignment / lab / record work"],
+ ["learn","DSA learning / pattern"],["main","Main DSA problem"],["recall","Revision / C++ recall"]
+ ];
+ document.getElementById("checks").innerHTML=checks.map(([k,l])=>`<label class="check"><input type="checkbox" id="c_${k}" ${data.today[k]?"checked":""}><span>${l}</span></label>`).join("");
+ const dsa=data.problems.filter(x=>x.status==="completed").length;
+ document.getElementById("dsaCount").textContent=dsa;
+ document.getElementById("daysCount").textContent=data.logs.length;
+ document.getElementById("semCount").textContent=data.logs.filter(x=>x.sem).length;
+ document.getElementById("attCount").textContent=data.logs.filter(x=>x.att==="yes"||x.att==="partial").length;
+ const pct=Math.min(100,Math.round(dsa/10*100)); document.getElementById("roadPct").textContent=pct+"%";document.getElementById("roadBar").style.width=pct+"%";
+ document.getElementById("subjects").innerHTML=data.subjects.map((s,i)=>`<div class="subject"><input value="${esc(s.name)}" onchange="data.subjects[${i}].name=this.value;persist()"><input value="${esc(s.target)}" placeholder="Target" onchange="data.subjects[${i}].target=this.value;persist()"><select onchange="data.subjects[${i}].status=this.value;persist()">${["Not started","In progress","Done"].map(v=>`<option ${s.status===v?"selected":""}>${v}</option>`).join("")}</select></div>`).join("");
+ document.getElementById("priority").value=data.priority||"";
+ const week=data.logs.slice(-5);document.getElementById("dsaDays").textContent=week.filter(x=>x.dsa).length+" / 5";document.getElementById("semDays").textContent=week.filter(x=>x.sem).length+" / 5";document.getElementById("taskPct").textContent=(week.length?Math.round(week.filter(x=>x.sem).length/week.length*100):0)+"%";document.getElementById("weekAtt").textContent=week.filter(x=>x.att==="yes"||x.att==="partial").length+" days";
+ document.getElementById("weekRange").textContent="Current 5-day view";
+ document.getElementById("logBody").innerHTML=data.logs.map((x,i)=>`<tr><td><strong>${esc(x.date)}</strong></td><td>${x.dsa?"✅":"—"}</td><td>${x.sem?"✅":"—"}</td><td>${x.att==="yes"?"✅":x.att==="partial"?"🟡":x.att==="no"?"❌":"—"}</td><td>${esc(x.notes||"")}</td><td><button class="danger small" onclick="deleteLog(${i})">Delete</button></td></tr>`).join("");
+ document.getElementById("problemHistory").innerHTML=data.problems.map((p,i)=>`<div class="row" style="padding:7px 0;border-bottom:1px solid #ffffff0a"><span>${esc(p.name)}</span><span class="pill">${esc(p.status)}</span></div>`).join("");
+}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function saveToday(){let keys=["college","revision","assignment","learn","main","recall"];keys.forEach(k=>data.today[k]=document.getElementById("c_"+k).checked);let d=data.logs.find(x=>x.date===todayKey());let log={date:todayKey(),dsa:data.today.learn&&data.today.main,sem:data.today.revision||data.today.assignment,att:data.today.college?"yes":"no",notes:`DSA: ${data.today.main?"main problem worked":"no main problem"}; Semester: ${data.today.revision||data.today.assignment?"worked":"not worked"}`};if(d)Object.assign(d,log);else data.logs.push(log);persist()}
+function addProblem(){let n=document.getElementById("problemName").value.trim();if(!n)return toast("Enter a problem name");data.problems.push({name:n,status:document.getElementById("problemStatus").value});document.getElementById("problemName").value="";persist()}
+function addSubject(){data.subjects.push({name:"New Subject",target:"",status:"Not started"});persist()}
+function addPastDay(){let day=prompt("Day/date label (e.g. Day 3 or 2026-09-24):");if(!day)return;let dsa=confirm("Did you do DSA that day?");let sem=confirm("Did you do semester work?");let a=prompt("Attendance: yes / partial / no / unknown","yes");let notes=prompt("What did you accomplish?","");data.logs.push({date:day,dsa,sem,att:["yes","partial","no"].includes(a)?a:"unknown",notes});persist()}
+function deleteLog(i){if(confirm("Delete this log?")){data.logs.splice(i,1);persist()}}
+function savePriority(){data.priority=document.getElementById("priority").value;persist()}
+function exportData(){let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="placement-sem-dashboard-backup.json";a.click();URL.revokeObjectURL(a.href);toast("Backup exported")}
+function resetAll(){if(confirm("Reset all dashboard data? This cannot be undone.")){localStorage.removeItem(KEY);location.reload()}}
+render();
+</script>
+</body>
+</html>
